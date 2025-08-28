@@ -1,6 +1,19 @@
 #include "philo.h"
 
-static void	free_data(t_philosopher *philos, pthread_mutex_t *m_forks);
+static void	free_data(t_philosopher *philos, pthread_mutex_t *m_forks)
+{
+	int	i;
+
+	i = -1;
+	while (++i < philos->status->total_philo)
+		pthread_mutex_destroy(&m_forks[i]);
+	pthread_mutex_destroy(&philos->status->m_print_status);
+	pthread_mutex_destroy(&philos->status->m_meals_repeated);
+	pthread_mutex_destroy(&philos->status->m_stop_dinner);
+	pthread_mutex_destroy(&philos->status->m_last_meal);
+	free(m_forks);
+	free(philos);
+}
 
 int	main(int argc, char **argv)
 {
@@ -13,34 +26,19 @@ int	main(int argc, char **argv)
 		printf("Invalid args: usage is <nbr_of_philo>(>= 1) "\
 				"<time_to_die>(>= 1) <time_to_eat>(>= 1) "\
 				"<time_to_sleep>(>= 1) <must_eat>(optional).\n");
-		return (EXIT_FAILURE);
+		return (1);
 	}
 	init_status(argv, &status);
 	m_forks = init_forks(&status);
 	if (!m_forks)
-		return (EXIT_FAILURE);
+		return (1);
 	philos = init_philosophers(&status, &m_forks);
 	if (!philos)
 	{
 		free(m_forks);
-		return (EXIT_FAILURE);
+		return (1);
 	}
 	set_dinner(&status, philos);
 	free_data(philos, m_forks);
 	return (0);
-}
-
-static void	free_data(t_philosopher *philos, pthread_mutex_t *m_forks)
-{
-	size_t	i;
-
-	i = -1;
-	while (++i < philos->status->total_philo)
-		pthread_mutex_destroy(&m_forks[i]);
-	pthread_mutex_destroy(&philos->status->m_print_status);
-	pthread_mutex_destroy(&philos->status->m_meals_repeated);
-	pthread_mutex_destroy(&philos->status->m_stop_dinner);
-	pthread_mutex_destroy(&philos->status->m_last_meal);
-	free(m_forks);
-	free(philos);
 }

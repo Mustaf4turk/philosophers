@@ -1,28 +1,46 @@
 #include "philo.h"
 
-static int		ft_isdigit(int c);
-static t_bool	is_natural_nbr(char *string);
-
-t_bool	is_valid_input(int argc, char **argv)
+int	ft_isdigit(int c)
 {
-	size_t	i;
+	if (c >= 48 && c <= 57)
+		return (2048);
+	return (0);
+}
+
+int	is_natural_nbr(char *string)
+{
+	int	i;
+
+	i = 0;
+	while (string[i] != '\0')
+	{
+		if (!ft_isdigit(string[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+int	is_valid_input(int argc, char **argv)
+{
+	int	i;
 
 	i = 1;
 	if (argc < 5 || argc > 6)
-		return (FALSE);
-	while (i < (size_t) argc)
+		return (0);
+	while (i < argc)
 	{
 		if (!is_natural_nbr(argv[i]) || *argv[1] == '0' \
 			|| *argv[2] == '0' || *argv[3] == '0' || *argv[4] == '0')
-			return (FALSE);
+			return (0);
 		i++;
 	}
-	return (TRUE);
+	return (1);
 }
 
-size_t	to_natural_nbr(char *str)
+int	to_natural_nbr(char *str)
 {
-	size_t	nbr_conv;
+	int	nbr_conv;
 
 	nbr_conv = 0;
 	while (*str)
@@ -33,23 +51,3 @@ size_t	to_natural_nbr(char *str)
 	return (nbr_conv);
 }
 
-static t_bool	is_natural_nbr(char *string)
-{
-	size_t	i;
-
-	i = 0;
-	while (string[i] != '\0')
-	{
-		if (!ft_isdigit(string[i]))
-			return (FALSE);
-		i++;
-	}
-	return (TRUE);
-}
-
-static int	ft_isdigit(int c)
-{
-	if (c >= 48 && c <= 57)
-		return (2048);
-	return (0);
-}

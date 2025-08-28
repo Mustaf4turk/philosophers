@@ -1,42 +1,64 @@
 #include "philo.h"
 
-void	set_dinner(t_status *status, t_philosopher *philos)
+static void	create_philosopher_threads(t_status *status, t_philosopher *philos,
+		pthread_t *threads)
 {
-	pthread_t	*seat;
-	pthread_t	manager;
-	size_t		i;
+	int	index;
 
-	seat = malloc(status->total_philo * sizeof(pthread_t));
-	i = -1;
-	while (++i < status->total_philo)
-		pthread_create(seat + i, NULL, start_dinner, &philos[i]);
-	pthread_create(&manager, NULL, thread_manager, philos);
-	i = -1;
-	while (++i < philos->status->total_philo)
-		pthread_join(seat[i], NULL);
-	pthread_join(manager, NULL);
-	free(seat);
+	index = 0;
+	while (index < status->total_philo)
+	{
+		pthread_create(&threads[index], NULL, start_dinner, &philos[index]);
+		index++;
+	}
 }
 
-void	*start_dinner(void *philo_sits_down)
+static void	wait_for_completion(t_status *status, pthread_t *threads,
+		pthread_t monitor)
+{
+	int	index;
+
+	index = 0;
+	while (index < status->total_philo)
+	{
+		pthread_join(threads[index], NULL);
+		index++;
+	}
+	pthread_join(monitor, NULL);
+}
+
+static int	should_philosopher_continue(t_philosopher *philo)
+{
+	int	should_continue;
+
+	pthread_mutex_lock(&philo->status->m_stop_dinner);
+	should_continue = (philo->status->stop_dinner == 0);
+	pthread_mutex_unlock(&philo->status->m_stop_dinner);
+	return (should_continue);
+}
+
+static void	handle_meal_completion(t_philosopher *philo)
+{
+	pthread_mutex_lock(&philo->status->m_meals_repeated);
+	philo->status->meals_repeated++;
+	pthread_mutex_unlock(&philo->status->m_meals_repeated);
+}
+
+void	*start_dinner(void *philosopher_data)
 {
 	t_philosopher	*philo;
 
-	philo = philo_sits_down;
+	philo = (t_philosopher *)philosopher_data;
 	if (philo->status->total_philo == 1)
-	{
-		print_status(philo, TAKING_FORK);
-		usleep(philo->status->time_of_death * 1000);
-		return (NULL);
-	}
-	while (!stop_dinner(philo->status))
+		return (handle_single_philosopher(philo));
+	if (philo->philo_name % 2 == 0)
+		usleep(philo->status->time_of_eating * 500);
+	while (should_philosopher_continue(philo))
 	{
 		eating(philo);
 		if (philo->eat_again == philo->status->meals_to_eat)
 		{
-			pthread_mutex_lock(&philo->status->m_meals_repeated);
-			philo->status->meals_repeated += 1;
-			pthread_mutex_unlock(&philo->status->m_meals_repeated);
+			handle_meal_completion(philo);
 			return (NULL);
 		}
 		sleeping(philo);
@@ -45,22 +67,27 @@ void	*start_dinner(void *philo_sits_down)
 	return (NULL);
 }
 
-t_bool	stop_dinner(t_status *philo_status)
+void	*handle_single_philosopher(t_philosopher *philo)
 {
-	pthread_mutex_lock(&philo_status->m_stop_dinner);
-	if (philo_status->stop_dinner == TRUE)
-	{
-		pthread_mutex_unlock(&philo_status->m_stop_dinner);
-		return (TRUE);
-	}
-	pthread_mutex_unlock(&philo_status->m_stop_dinner);
-	return (FALSE);
+	print_status(philo, TAKING_FORK);
+	usleep(philo->status->time_of_death * 1000);
+	return (NULL);
 }
 
-size_t	print_status(t_philosopher *philo, t_action action)
+int	stop_dinner(t_status *philo_status)
 {
-	size_t	current_time;
-	size_t	time_spent;
+	int	dinner_stopped;
+
+	pthread_mutex_lock(&philo_status->m_stop_dinner);
+	dinner_stopped = philo_status->stop_dinner;
+	pthread_mutex_unlock(&philo_status->m_stop_dinner);
+	return (dinner_stopped);
+}
+
+long	print_status(t_philosopher *philo, t_action action)
+{
+	long	current_time;
+	long	time_spent;
 
 	current_time = get_current_time();
 	time_spent = current_time - philo->status->start_time;
@@ -79,4 +106,18 @@ size_t	print_status(t_philosopher *philo, t_action action)
 		printf(THINK_LOG, time_spent, philo->philo_name);
 	pthread_mutex_unlock(&philo->status->m_print_status);
 	return (current_time);
+}
+
+void	set_dinner(t_status *status, t_philosopher *philos)
+{
+	pthread_t	*philosopher_threads;
+	pthread_t	monitor_thread;
+
+	philosopher_threads = malloc(status->total_philo * sizeof(pthread_t));
+	if (!philosopher_threads)
+		return ;
+	create_philosopher_threads(status, philos, philosopher_threads);
+	pthread_create(&monitor_thread, NULL, thread_manager, philos);
+	wait_for_completion(status, philosopher_threads, monitor_thread);
+	free(philosopher_threads);
 }

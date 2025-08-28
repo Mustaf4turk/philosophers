@@ -12,8 +12,9 @@ void	eating(t_philosopher *philo)
 	}
 	philo->eat_again += 1;
 	pthread_mutex_lock(&philo->status->m_last_meal);
-	philo->last_meal = print_status(philo, EATING);
+	philo->last_meal = get_current_time();
 	pthread_mutex_unlock(&philo->status->m_last_meal);
+	print_status(philo, EATING);
 	mssleep(philo->status->time_of_eating);
 	pthread_mutex_unlock(philo->m_right_fork);
 	pthread_mutex_unlock(philo->m_left_fork);

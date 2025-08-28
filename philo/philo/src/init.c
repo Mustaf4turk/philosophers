@@ -11,7 +11,7 @@ void	init_status(char **argv, t_status *status)
 		status->meals_to_eat = to_natural_nbr(argv[5]);
 	status->meals_repeated = 0;
 	status->start_time = get_current_time();
-	status->stop_dinner = FALSE;
+	status->stop_dinner = 0;
 	pthread_mutex_init(&status->m_print_status, NULL);
 	pthread_mutex_init(&status->m_meals_repeated, NULL);
 	pthread_mutex_init(&status->m_stop_dinner, NULL);
@@ -21,7 +21,7 @@ void	init_status(char **argv, t_status *status)
 pthread_mutex_t	*init_forks(t_status *status)
 {
 	pthread_mutex_t	*m_forks;
-	size_t			i;
+	int				i;
 
 	m_forks = malloc(status->total_philo * sizeof(pthread_mutex_t));
 	if (!m_forks)
@@ -35,7 +35,7 @@ pthread_mutex_t	*init_forks(t_status *status)
 t_philosopher	*init_philosophers(t_status *status, pthread_mutex_t **m_forks)
 {
 	t_philosopher	*philos;
-	size_t			i;
+	int				i;
 
 	philos = malloc(status->total_philo * sizeof(t_philosopher));
 	if (!philos)

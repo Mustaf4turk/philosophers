@@ -22,11 +22,22 @@ long	get_current_time(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-void	mssleep(size_t ms_time)
+void	mssleep(long ms_time)
 {
-	size_t	start;
+	long	start;
+	long	current;
+	long	remaining;
 
 	start = get_current_time();
-	while (ms_time > get_current_time() - start)
-		usleep(100);
+	while (1)
+	{
+		current = get_current_time();
+		if (current - start >= ms_time)
+			break ;
+		remaining = ms_time - (current - start);
+		if (remaining >= 5)
+			usleep(remaining * 500);
+		else
+			usleep(200);
+	}
 }
