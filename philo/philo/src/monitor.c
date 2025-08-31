@@ -22,11 +22,15 @@ int	check_philosopher_death(t_philosopher *philo)
 int	monitor_philosophers(t_philosopher *philos, t_status *status)
 {
 	int	philosopher_index;
+	int	meal_completed;
 
 	philosopher_index = 0;
 	while (philosopher_index < status->total_philo)
 	{
-		if (!philos[philosopher_index].meal_completed && 
+		pthread_mutex_lock(&status->m_meals_repeated);
+		meal_completed = philos[philosopher_index].meal_completed;
+		pthread_mutex_unlock(&status->m_meals_repeated);
+		if (!meal_completed && 
 			check_philosopher_death(&philos[philosopher_index]))
 		{
 			terminate_simulation(status);
