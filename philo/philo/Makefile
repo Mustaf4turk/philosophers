@@ -14,7 +14,8 @@ SRC     = main.c \
           manager.c \
           monitor.c \
           validation.c \
-          actions.c
+          actions.c \
+          fork_utils.c
 
 OBJ     = $(addprefix $(OBJDIR)/,$(SRC:.c=.o))
 

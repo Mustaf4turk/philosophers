@@ -70,6 +70,11 @@ void			eating(t_philosopher *philo);
 void			thinking(t_philosopher *philo);
 void			sleeping(t_philosopher *philo);
 
+int				take_forks_odd(t_philosopher *philo);
+int				take_forks_even(t_philosopher *philo);
+int				take_forks(t_philosopher *philo);
+void			release_forks(t_philosopher *philo);
+
 void			*thread_manager(void *philosophers);
 void			terminate_simulation(t_status *philo_status);
 int				monitor_philosophers(t_philosopher *philos, t_status *status);
