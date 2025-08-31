@@ -1,41 +1,53 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   actions.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: muturk <muturk@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/31 08:57:58 by muturk            #+#    #+#             */
+/*   Updated: 2025/08/31 09:08:27 by muturk           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 static void	perform_eating(t_philosopher *philo)
 {
-	philo->eat_again += 1;
-	pthread_mutex_lock(&philo->status->m_last_meal);
-	philo->last_meal = get_current_time();
-	pthread_mutex_unlock(&philo->status->m_last_meal);
-	print_status(philo, EATING);
-	mssleep(philo->status->time_of_eating);
+	philo->eat_cnt += 1;
+	pthread_mutex_lock(&philo->status->m_meal);
+	philo->last = get_time();
+	pthread_mutex_unlock(&philo->status->m_meal);
+	print_msg(philo, EATING);
+	mssleep(philo->status->eat_time);
 }
 
 void	eating(t_philosopher *philo)
 {
-	if (stop_dinner(philo->status))
+	if (is_stopped(philo->status))
 		return ;
 	if (take_forks(philo))
 		return ;
-	if (stop_dinner(philo->status))
+	if (is_stopped(philo->status))
 	{
-		release_forks(philo);
+		drop_forks(philo);
 		return ;
 	}
 	perform_eating(philo);
-	release_forks(philo);
+	drop_forks(philo);
 }
 
 void	thinking(t_philosopher *philo)
 {
-	if (stop_dinner(philo->status))
+	if (is_stopped(philo->status))
 		return ;
-	print_status(philo, THINKING);
+	print_msg(philo, THINKING);
 }
 
 void	sleeping(t_philosopher *philo)
 {
-	if (stop_dinner(philo->status))
+	if (is_stopped(philo->status))
 		return ;
-	print_status(philo, SLEEPING);
-	mssleep(philo->status->time_of_sleeping);
+	print_msg(philo, SLEEPING);
+	mssleep(philo->status->sleep_time);
 }

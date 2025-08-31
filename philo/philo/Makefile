@@ -1,34 +1,32 @@
-NAME    = philo
-CC      = cc
-CFLAGS  = -Wall -Wextra -Werror -Iinclude -g
-LDFLAGS = -pthread
+NAME		= philo
+CC			= cc
+CFLAGS		= -Wall -Wextra -Werror -Iinclude
+LDFLAGS		= -pthread
 
-SRCDIR  = src
-OBJDIR  = obj
+SRCDIR		= src
+OBJDIR		= obj
 
-SRC     = main.c \
-          dinner.c \
-          dinner_utils.c \
-          utils.c \
-          init.c \
-          manager.c \
-          monitor.c \
-          validation.c \
-          actions.c \
-          fork_utils.c
+SRCS		= main.c \
+			  dinner.c \
+			  dinner_utils.c \
+			  utils.c \
+			  init.c \
+			  manager.c \
+			  monitor.c \
+			  validation.c \
+			  actions.c \
+			  fork_utils.c
 
-OBJ     = $(addprefix $(OBJDIR)/,$(SRC:.c=.o))
+OBJS		= $(SRCS:%.c=$(OBJDIR)/%.o)
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
-	$(CC) $(OBJ) $(LDFLAGS) -o $(NAME)
+$(NAME): $(OBJS)
+	$(CC) $(OBJS) $(LDFLAGS) -o $(NAME)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.c include/philo.h | $(OBJDIR)
+$(OBJDIR)/%.o: $(SRCDIR)/%.c include/philo.h
+	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
-
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
 
 clean:
 	rm -rf $(OBJDIR)

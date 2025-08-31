@@ -26,64 +26,65 @@ typedef enum e_action
 
 typedef struct s_status
 {
-	long			time_of_death;
-	long			time_of_eating;
-	long			time_of_sleeping;
-	int				total_philo;
-	int				meals_to_eat;
-	int				meals_repeated;
+	long			death_time;
+	long			eat_time;
+	long			sleep_time;
+	int				count;
+	int				meal_limit;
+	int				eaten;
 	long			start_time;
-	int				stop_dinner;
-	pthread_mutex_t	m_print_status;
-	pthread_mutex_t	m_meals_repeated;
-	pthread_mutex_t	m_stop_dinner;
-	pthread_mutex_t	m_last_meal;
+	int				stop;
+	pthread_mutex_t	m_print;
+	pthread_mutex_t	m_eaten;
+	pthread_mutex_t	m_stop;
+	pthread_mutex_t	m_meal;
 }	t_status;
 
 typedef struct s_philosopher
 {
-	int				philo_name;
-	int				eat_again;
+	int				id;
+	int				eat_cnt;
 	int				meal_completed;
-	long			last_meal;
-	pthread_mutex_t	*m_left_fork;
-	pthread_mutex_t	*m_right_fork;
+	long			last;
+	pthread_mutex_t	*l_fork;
+	pthread_mutex_t	*r_fork;
 	t_status		*status;
 }	t_philosopher;
 
-int				to_natural_nbr(char *arg);
-int				is_valid_input(int argc, char **argv);
+int				to_nbr(char *arg);
+int				is_valid(int argc, char **argv);
 
 void			init_status(char **argv, t_status *status);
 pthread_mutex_t	*init_forks(t_status *status);
 t_philosopher	*init_philosophers(t_status *status, \
 						pthread_mutex_t **forks);
 
+void			end_sim(t_status *data);
 void			set_dinner(t_status *status, t_philosopher *philos);
 void			*start_dinner(void *philo_sits_down);
-int				stop_dinner(t_status *philo_status);
+int				is_stopped(t_status *data);
 int				should_philosopher_continue(t_philosopher *philo);
-long			print_status(t_philosopher *philo, t_action action);
+long			print_msg(t_philosopher *philo, t_action action);
 void			*handle_single_philosopher(t_philosopher *philo);
 
 void			eating(t_philosopher *philo);
 void			thinking(t_philosopher *philo);
 void			sleeping(t_philosopher *philo);
 
-int				take_forks_odd(t_philosopher *philo);
-int				take_forks_even(t_philosopher *philo);
+int				take_odd(t_philosopher *philo);
+int				take_even(t_philosopher *philo);
 int				take_forks(t_philosopher *philo);
-void			release_forks(t_philosopher *philo);
+void			drop_forks(t_philosopher *philo);
 
 void			*thread_manager(void *philosophers);
-void			terminate_simulation(t_status *philo_status);
+void			set_stop(t_status *data);
 int				monitor_philosophers(t_philosopher *philos, t_status *status);
-int				check_meal_completion(t_status *philo_status);
+int				check_all_ate(t_status *data);
 int				check_philosopher_death(t_philosopher *philo);
 
-int				ft_min(int a, int b);
-int				ft_max(int a, int b);
-long			get_current_time(void);
+int				min(int a, int b);
+int				max(int a, int b);
+long			get_time(void);
 void			mssleep(long ms_time);
 
 #endif

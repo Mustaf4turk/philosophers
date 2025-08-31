@@ -1,27 +1,39 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   validation.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: muturk <muturk@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/31 08:58:19 by muturk            #+#    #+#             */
+/*   Updated: 2025/08/31 08:59:34 by muturk           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-int	ft_isdigit(int c)
+int	is_digit(int c)
 {
 	if (c >= 48 && c <= 57)
 		return (2048);
 	return (0);
 }
 
-int	is_natural_nbr(char *string)
+int	is_num(char *string)
 {
 	int	i;
 
 	i = 0;
 	while (string[i] != '\0')
 	{
-		if (!ft_isdigit(string[i]))
+		if (!is_digit(string[i]))
 			return (0);
 		i++;
 	}
 	return (1);
 }
 
-int	is_valid_input(int argc, char **argv)
+int	is_valid(int argc, char **argv)
 {
 	int	i;
 
@@ -30,7 +42,7 @@ int	is_valid_input(int argc, char **argv)
 		return (0);
 	while (i < argc)
 	{
-		if (!is_natural_nbr(argv[i]) || *argv[1] == '0' \
+		if (!is_num(argv[i]) || *argv[1] == '0' \
 			|| *argv[2] == '0' || *argv[3] == '0' || *argv[4] == '0')
 			return (0);
 		i++;
@@ -38,7 +50,7 @@ int	is_valid_input(int argc, char **argv)
 	return (1);
 }
 
-int	to_natural_nbr(char *str)
+int	to_nbr(char *str)
 {
 	int	nbr_conv;
 
@@ -50,4 +62,3 @@ int	to_natural_nbr(char *str)
 	}
 	return (nbr_conv);
 }
-

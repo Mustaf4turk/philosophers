@@ -1,16 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: muturk <muturk@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/31 08:58:06 by muturk            #+#    #+#             */
+/*   Updated: 2025/08/31 09:12:32 by muturk           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-static void	free_data(t_philosopher *philos, pthread_mutex_t *m_forks)
+void	free_data(t_philosopher *philos, pthread_mutex_t *m_forks)
 {
 	int	i;
 
 	i = -1;
-	while (++i < philos->status->total_philo)
+	while (++i < philos->status->count)
 		pthread_mutex_destroy(&m_forks[i]);
-	pthread_mutex_destroy(&philos->status->m_print_status);
-	pthread_mutex_destroy(&philos->status->m_meals_repeated);
-	pthread_mutex_destroy(&philos->status->m_stop_dinner);
-	pthread_mutex_destroy(&philos->status->m_last_meal);
+	pthread_mutex_destroy(&philos->status->m_print);
+	pthread_mutex_destroy(&philos->status->m_eaten);
+	pthread_mutex_destroy(&philos->status->m_stop);
+	pthread_mutex_destroy(&philos->status->m_meal);
 	free(m_forks);
 	free(philos);
 }
@@ -21,7 +33,7 @@ int	main(int argc, char **argv)
 	t_philosopher	*philos;
 	t_status		status;
 
-	if (!is_valid_input(argc, argv))
+	if (!is_valid(argc, argv))
 	{
 		printf("Invalid args: usage is <nbr_of_philo>(>= 1) "\
 				"<time_to_die>(>= 1) <time_to_eat>(>= 1) "\

@@ -1,20 +1,32 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: muturk <muturk@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/31 08:58:17 by muturk            #+#    #+#             */
+/*   Updated: 2025/08/31 08:58:18 by muturk           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-int	ft_min(int a, int b)
+int	min(int a, int b)
 {
 	if (a < b)
 		return (a);
 	return (b);
 }
 
-int	ft_max(int a, int b)
+int	max(int a, int b)
 {
 	if (a > b)
 		return (a);
 	return (b);
 }
 
-long	get_current_time(void)
+long	get_time(void)
 {
 	struct timeval	time;
 
@@ -28,10 +40,10 @@ void	mssleep(long ms_time)
 	long	current;
 	long	remaining;
 
-	start = get_current_time();
+	start = get_time();
 	while (1)
 	{
-		current = get_current_time();
+		current = get_time();
 		if (current - start >= ms_time)
 			break ;
 		remaining = ms_time - (current - start);
