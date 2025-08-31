@@ -8,9 +8,11 @@ OBJDIR  = obj
 
 SRC     = main.c \
           dinner.c \
+          dinner_utils.c \
           utils.c \
           init.c \
           manager.c \
+          monitor.c \
           validation.c \
           actions.c
 

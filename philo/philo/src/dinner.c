@@ -27,63 +27,6 @@ static void	wait_for_completion(t_status *status, pthread_t *threads,
 	pthread_join(monitor, NULL);
 }
 
-static int	should_philosopher_continue(t_philosopher *philo)
-{
-	int	should_continue;
-
-	pthread_mutex_lock(&philo->status->m_stop_dinner);
-	should_continue = (philo->status->stop_dinner == 0);
-	pthread_mutex_unlock(&philo->status->m_stop_dinner);
-	return (should_continue);
-}
-
-static void	handle_meal_completion(t_philosopher *philo)
-{
-	pthread_mutex_lock(&philo->status->m_meals_repeated);
-	philo->status->meals_repeated++;
-	pthread_mutex_unlock(&philo->status->m_meals_repeated);
-}
-
-void	*start_dinner(void *philosopher_data)
-{
-	t_philosopher	*philo;
-
-	philo = (t_philosopher *)philosopher_data;
-	if (philo->status->total_philo == 1)
-		return (handle_single_philosopher(philo));
-	if (philo->philo_name % 2 == 0)
-		usleep(philo->status->time_of_eating * 500);
-	while (should_philosopher_continue(philo))
-	{
-		eating(philo);
-		if (philo->eat_again == philo->status->meals_to_eat)
-		{
-			handle_meal_completion(philo);
-			return (NULL);
-		}
-		sleeping(philo);
-		thinking(philo);
-	}
-	return (NULL);
-}
-
-void	*handle_single_philosopher(t_philosopher *philo)
-{
-	print_status(philo, TAKING_FORK);
-	usleep(philo->status->time_of_death * 1000);
-	return (NULL);
-}
-
-int	stop_dinner(t_status *philo_status)
-{
-	int	dinner_stopped;
-
-	pthread_mutex_lock(&philo_status->m_stop_dinner);
-	dinner_stopped = philo_status->stop_dinner;
-	pthread_mutex_unlock(&philo_status->m_stop_dinner);
-	return (dinner_stopped);
-}
-
 long	print_status(t_philosopher *philo, t_action action)
 {
 	long	current_time;
@@ -95,9 +38,7 @@ long	print_status(t_philosopher *philo, t_action action)
 	if (action == TAKING_FORK)
 		printf(FORK_LOG, time_spent, philo->philo_name);
 	else if (action == EATING)
-		printf(FORK_LOG FORK_LOG EAT_LOG, time_spent, \
-					philo->philo_name, time_spent, philo->philo_name, \
-					time_spent, philo->philo_name);
+		printf(EAT_LOG, time_spent, philo->philo_name);
 	else if (action == SLEEPING)
 		printf(SLEEP_LOG, time_spent, philo->philo_name);
 	else if (action == DEAD)

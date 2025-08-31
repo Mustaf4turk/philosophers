@@ -44,6 +44,7 @@ typedef struct s_philosopher
 {
 	int				philo_name;
 	int				eat_again;
+	int				meal_completed;
 	long			last_meal;
 	pthread_mutex_t	*m_left_fork;
 	pthread_mutex_t	*m_right_fork;
@@ -61,6 +62,7 @@ t_philosopher	*init_philosophers(t_status *status, \
 void			set_dinner(t_status *status, t_philosopher *philos);
 void			*start_dinner(void *philo_sits_down);
 int				stop_dinner(t_status *philo_status);
+int				should_philosopher_continue(t_philosopher *philo);
 long			print_status(t_philosopher *philo, t_action action);
 void			*handle_single_philosopher(t_philosopher *philo);
 
@@ -68,7 +70,11 @@ void			eating(t_philosopher *philo);
 void			thinking(t_philosopher *philo);
 void			sleeping(t_philosopher *philo);
 
-void			*thread_manager(void *arg);
+void			*thread_manager(void *philosophers);
+void			terminate_simulation(t_status *philo_status);
+int				monitor_philosophers(t_philosopher *philos, t_status *status);
+int				check_meal_completion(t_status *philo_status);
+int				check_philosopher_death(t_philosopher *philo);
 
 int				ft_min(int a, int b);
 int				ft_max(int a, int b);

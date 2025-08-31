@@ -50,6 +50,7 @@ t_philosopher	*init_philosophers(t_status *status, pthread_mutex_t **m_forks)
 			&(*m_forks)[ft_max(i, ((i + 1) % status->total_philo))];
 		philos[i].status = status;
 		philos[i].eat_again = 0;
+		philos[i].meal_completed = 0;
 		philos[i].last_meal = status->start_time;
 		i++;
 	}
