@@ -6,13 +6,13 @@
 /*   By: muturk <muturk@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/31 08:57:58 by muturk            #+#    #+#             */
-/*   Updated: 2025/08/31 09:08:27 by muturk           ###   ########.fr       */
+/*   Updated: 2025/08/31 15:33:44 by muturk           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	perform_eating(t_philosopher *philo)
+void	perform_eating(t_philosopher *philo)
 {
 	philo->eat_cnt += 1;
 	pthread_mutex_lock(&philo->status->m_meal);

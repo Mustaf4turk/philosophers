@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: muturk <muturk@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/31 15:00:53 by muturk            #+#    #+#             */
+/*   Updated: 2025/08/31 17:11:26 by muturk           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PHILO_H
 # define PHILO_H
 
@@ -12,8 +24,6 @@
 # define SLEEP_LOG	"%-5ld %2d is sleeping\n"
 # define THINK_LOG	"%-5ld %2d is thinking\n"
 # define DEATH_LOG	"%-5ld %2d died\n"
-
-
 
 typedef enum e_action
 {
@@ -51,7 +61,7 @@ typedef struct s_philosopher
 	t_status		*status;
 }	t_philosopher;
 
-int				to_nbr(char *arg);
+int				to_nbr(char *str);
 int				is_valid(int argc, char **argv);
 
 void			init_status(char **argv, t_status *status);
